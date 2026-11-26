@@ -1,1 +1,280 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Student Mentorship Assistant</title>
+
+<style>
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    background: #f3f6fb;
+    color: #243247;
+}
+header {
+    background: #142b4a;
+    color: white;
+    padding: 25px 7%;
+}
+header a {
+    color: #9bd7ff;
+    text-decoration: none;
+}
+.container {
+    max-width: 900px;
+    margin: 30px auto;
+    padding: 20px;
+}
+.card {
+    background: white;
+    padding: 25px;
+    margin-bottom: 22px;
+    border-radius: 14px;
+    box-shadow: 0 3px 12px #00000008;
+}
+h1, h2 {
+    color: #142b4a;
+}
+header h1 {
+    color: white;
+}
+label {
+    display: block;
+    margin: 16px 0 7px;
+    font-weight: bold;
+}
+input, select, textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ccd7e5;
+    border-radius: 8px;
+    font: inherit;
+    box-sizing: border-box;
+}
+textarea {
+    min-height: 100px;
+    resize: vertical;
+}
+button {
+    padding: 12px 18px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    margin-top: 15px;
+}
+.primary {
+    background: #2563a6;
+    color: white;
+}
+.secondary {
+    background: #142b4a;
+    color: white;
+}
+.output {
+    white-space: pre-wrap;
+    line-height: 1.7;
+    background: #f8fafc;
+    padding: 18px;
+    border: 1px solid #dce5ef;
+    border-radius: 10px;
+}
+.notice {
+    background: #fff7e6;
+    border: 1px solid #f0d38a;
+    padding: 14px;
+    border-radius: 9px;
+    line-height: 1.6;
+}
+.hidden {
+    display: none;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <a href="index.html">← Back to Faculty AI Hub</a>
+    <h1>🎓 Student Mentorship Assistant</h1>
+    <p>Organize mentoring meetings and create structured follow-up records.</p>
+</header>
+
+<div class="container">
+
+    <div class="card">
+        <div class="notice">
+            <strong>Privacy reminder:</strong>
+            Use fictional or anonymized information for this demonstration.
+            Do not enter student names, phone numbers, sensitive personal
+            information or confidential institutional records into public AI tools.
+            This demo does not save the form data.
+        </div>
+
+        <h2>Mentorship Meeting Details</h2>
+
+        <form id="mentorForm">
+
+            <label for="date">Meeting Date</label>
+            <input type="date" id="date" required>
+
+            <label for="student">Student ID / Anonymized Code</label>
+            <input type="text" id="student" placeholder="Example: Student 08" required>
+
+            <label for="semester">Semester / Class</label>
+            <input type="text" id="semester" placeholder="Example: BTech Semester 5">
+
+            <label for="progress">Academic Progress</label>
+            <select id="progress">
+                <option value="">Select progress</option>
+                <option>Excellent</option>
+                <option>Satisfactory</option>
+                <option>Needs improvement</option>
+                <option>Requires additional support</option>
+            </select>
+
+            <label for="discussion">Discussion Topics</label>
+            <textarea id="discussion" placeholder="Topics discussed during the mentoring meeting..."></textarea>
+
+            <label for="concerns">Challenges / Concerns (if any)</label>
+            <textarea id="concerns" placeholder="General academic challenges or concerns..."></textarea>
+
+            <label for="action">Agreed Action Plan</label>
+            <textarea id="action" placeholder="Actions agreed upon during the meeting..."></textarea>
+
+            <label for="followup">Next Follow-up Date</label>
+            <input type="date" id="followup">
+
+            <button type="submit" class="primary">
+                Generate Mentorship Record
+            </button>
+
+        </form>
+    </div>
+
+    <div class="card hidden" id="resultCard">
+        <h2>Generated Mentorship Record</h2>
+        <div class="output" id="record"></div>
+
+        <button class="secondary" onclick="copyRecord()">
+            Copy Record
+        </button>
+
+        <button class="primary" onclick="generateAIPrompt()">
+            Generate AI Follow-up Prompt
+        </button>
+    </div>
+
+    <div class="card hidden" id="promptCard">
+        <h2>AI Follow-up Prompt</h2>
+        <p>
+            Copy this prompt and use it in your preferred AI assistant
+            to generate supportive follow-up suggestions.
+        </p>
+
+        <div class="output" id="aiPrompt"></div>
+
+        <button class="primary" onclick="copyAIPrompt()">
+            Copy AI Prompt
+        </button>
+    </div>
+
+</div>
+
+<script>
+
+let currentRecord = "";
+
+document.getElementById("mentorForm").addEventListener("submit", function(event) {
+    event.preventDefault();
+
+    const date = document.getElementById("date").value;
+    const student = document.getElementById("student").value;
+    const semester = document.getElementById("semester").value;
+    const progress = document.getElementById("progress").value;
+    const discussion = document.getElementById("discussion").value;
+    const concerns = document.getElementById("concerns").value;
+    const action = document.getElementById("action").value;
+    const followup = document.getElementById("followup").value;
+
+    currentRecord =
+`STUDENT MENTORSHIP RECORD
+
+Meeting Date: ${date}
+Student Code: ${student}
+Semester/Class: ${semester || "Not specified"}
+
+Academic Progress: ${progress || "Not specified"}
+
+Discussion Topics:
+${discussion || "Not specified"}
+
+Challenges / Concerns:
+${concerns || "Not specified"}
+
+Agreed Action Plan:
+${action || "Not specified"}
+
+Next Follow-up Date:
+${followup || "Not specified"}
+
+Mentor Review: Pending`;
+
+    document.getElementById("record").textContent = currentRecord;
+    document.getElementById("resultCard").classList.remove("hidden");
+    document.getElementById("promptCard").classList.add("hidden");
+
+    document.getElementById("resultCard").scrollIntoView({
+        behavior: "smooth"
+    });
+});
+
+function copyRecord() {
+    navigator.clipboard.writeText(currentRecord)
+    .then(() => alert("Mentorship record copied!"))
+    .catch(() => alert("Copy failed. Please select the record and copy manually."));
+}
+
+function generateAIPrompt() {
+    const prompt =
+`Act as a university student mentor and academic advisor.
+
+Based on the following anonymized mentorship record:
+
+${currentRecord}
+
+Please provide:
+1. A concise summary of the meeting.
+2. Three supportive follow-up questions the faculty mentor could ask.
+3. A practical academic support plan.
+4. Suggested follow-up actions.
+5. A brief, encouraging message for the student.
+
+Do not make assumptions about the student.
+Use supportive, non-judgmental language.
+Keep suggestions practical and appropriate for a university setting.
+The faculty mentor will review all suggestions before using them.`;
+
+    document.getElementById("aiPrompt").textContent = prompt;
+    document.getElementById("promptCard").classList.remove("hidden");
+
+    document.getElementById("promptCard").scrollIntoView({
+        behavior: "smooth"
+    });
+}
+
+function copyAIPrompt() {
+    const prompt = document.getElementById("aiPrompt").textContent;
+
+    navigator.clipboard.writeText(prompt)
+    .then(() => alert("AI prompt copied! Paste it into your AI assistant."))
+    .catch(() => alert("Copy failed. Please copy the prompt manually."));
+}
+
+</script>
+
+</body>
+</html>
+
